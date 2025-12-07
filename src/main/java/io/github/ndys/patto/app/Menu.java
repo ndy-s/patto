@@ -2,6 +2,8 @@ package io.github.ndys.patto.app;
 
 import java.util.Scanner;
 
+import io.github.ndys.patto.patterns.chainofresponsibility.ChainOfResponsibility;
+
 public class Menu {
 
     public static void show() {
@@ -16,6 +18,7 @@ public class Menu {
             int choice = scanner.nextInt();
 
             switch (choice) {
+                case 1 -> ChainOfResponsibility.show();
                 default -> System.out.println("Invalid input, try again!");
             }
 

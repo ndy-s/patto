@@ -2,7 +2,7 @@ package io.github.ndys.patto.app;
 
 import java.util.Scanner;
 
-import io.github.ndys.patto.patterns.chainofresponsibility.ChainOfResponsibility;
+import io.github.ndys.patto.patterns.chain_of_responsibility.ChainOfResponsibility;
 
 public class Menu {
 

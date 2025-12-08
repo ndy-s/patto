@@ -1,6 +1,6 @@
-package io.github.ndys.patto.patterns.chainofresponsibility.example1_support_ticket;
+package io.github.ndys.patto.patterns.chain_of_responsibility.example1_support_ticket;
 
-public class ChainOfResponsibilityDemo1 {
+public class Demo1 {
     public static void run() {
         System.out.println("--- Support Ticket Demo ---");
         TicketDemo ticketDemo = new TicketDemo();

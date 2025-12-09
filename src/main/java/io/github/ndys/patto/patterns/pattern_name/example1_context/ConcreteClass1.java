@@ -1,4 +1,4 @@
-package io.github.ndys.patto.patterns.<pattern_name>.example1_<context>;
+package io.github.ndys.patto.patterns.pattern_name.example1_context;
 
 public class ConcreteHandler extends <HandlerOrInterface> {
     @Override

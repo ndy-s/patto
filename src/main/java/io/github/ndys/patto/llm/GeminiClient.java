@@ -24,6 +24,8 @@ public class GeminiClient implements LLMClient {
 
     private static final Schema INSTRUCTIONS_SCHEMA = SchemaLoader.load(new JSONObject(LLMConfig.INSTRUCTIONS_SCHEMA_JSON));
     private static final Schema TEMPLATE_SCHEMA = SchemaLoader.load(new JSONObject(LLMConfig.TEMPLATE_SCHEMA_JSON));
+    private static final Schema HELP_SCHEMA =
+    SchemaLoader.load(new JSONObject(LLMConfig.HELP_SCHEMA_JSON));
     private static final Schema SOLUTION_SCHEMA = SchemaLoader.load(new JSONObject(LLMConfig.SOLUTION_SCHEMA_JSON));
 
     @Override
@@ -52,6 +54,36 @@ public class GeminiClient implements LLMClient {
         return callWithSchemaRetry(prompt, SOLUTION_SCHEMA, new TypeReference<>() {});
     }
 
+    @Override
+    public Map<String, Object> askHelp(
+        String patternName,
+        String instructions,
+        Map<String, String> exerciseFiles,
+        String userQuestion
+    ) {
+        try {
+            StringBuilder fileContext = new StringBuilder();
+            exerciseFiles.forEach((name, content) -> {
+                fileContext.append("FILE: ").append(name).append("\n")
+                    .append(content).append("\n\n");
+            });
+
+            String prompt = String.format(
+                LLMConfig.HELP_PROMPT_TEMPLATE,
+                patternName,
+                instructions,
+                fileContext,
+                LLMConfig.HELP_SCHEMA_JSON,
+                userQuestion
+            );
+
+            return callWithSchemaRetry(prompt, HELP_SCHEMA, new TypeReference<>() {});
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     private static <T> T callWithSchemaRetry(String prompt, Schema schema, TypeReference<T> typeRef) {
         for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
             try {
@@ -72,5 +104,6 @@ public class GeminiClient implements LLMClient {
         }
         return null;
     }
+
 }
 

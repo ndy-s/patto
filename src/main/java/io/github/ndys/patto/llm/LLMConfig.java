@@ -28,6 +28,19 @@ public class LLMConfig {
             }
             """;
 
+    public static final String HELP_SCHEMA_JSON = """
+        {
+            "type": "object",
+            "required": ["answer"],
+            "properties": {
+                "answer": { "type": "string" },
+                "extraTips": { "type": "array", "items": { "type": "string" } },
+                "relatedFiles": { "type": "array", "items": { "type": "string" } }
+            },
+            "additionalProperties": false
+        }
+    """;
+
     public static final String SOLUTION_SCHEMA_JSON = """
             {
               "type": "object",
@@ -87,6 +100,35 @@ public class LLMConfig {
             Return strictly JSON, following the schema:
             %s
             """;
+
+    public static final String HELP_PROMPT_TEMPLATE = """
+    You are helping a student with a Java design-pattern exercise.
+
+    The following is the exercise context:
+    -------------------------------------
+    Pattern: %s
+
+    Instructions:
+    %s
+
+    Exercise Files:
+    %s
+    -------------------------------------
+
+    Now answer the student's question below.  
+
+    Requirements:
+    - Provide **clear, helpful, technical explanations**
+    - Use **Java terminology**
+    - Do NOT reveal or generate full solutions.
+    - You MAY give hints or explanations.
+    - Return strictly JSON, matching this schema:
+
+    %s
+
+    Student question:
+    %s
+    """;
 
     public static final String SOLUTION_PROMPT_TEMPLATE = """
             You are a code reviewer. Check the Java exercise solution and return structured feedback in JSON.

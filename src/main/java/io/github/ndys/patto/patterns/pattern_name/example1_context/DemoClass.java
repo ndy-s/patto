@@ -1,6 +1,6 @@
-package io.github.ndys.patto.patterns.<pattern_name>.example1_<context>;
+package io.github.ndys.patto.patterns.pattern_name.example1_context;
 
-public class <DemoClass> {
+public class DemoClass {
 
     public static void run() {
         System.out.println("--- <Context Description> Demo ---");

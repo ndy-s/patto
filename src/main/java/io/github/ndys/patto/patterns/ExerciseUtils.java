@@ -2,6 +2,7 @@ package io.github.ndys.patto.patterns;
 
 import io.github.ndys.patto.llm.GeminiClient;
 import io.github.ndys.patto.llm.LLMClient;
+import io.github.ndys.patto.console.MarkdownTerminalRenderer;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,17 +53,26 @@ public class ExerciseUtils {
                 Path filePath = exerciseRoot.resolve(entry.getKey());
                 Files.createDirectories(filePath.getParent());
 
-                // Determine package line based on subfolders
                 Path relativePath = exerciseRoot.relativize(filePath.getParent());
+
                 String packageName = basePackage;
-                if (relativePath.getNameCount() > 0) {
-                    packageName += "." + relativePath.toString().replace(File.separatorChar, '.');
+
+                if (relativePath != null && relativePath.getNameCount() > 0) {
+                    String raw = relativePath.toString().replace(File.separatorChar, '.');
+                    if (!raw.equals(".") && !raw.isBlank()) {
+                        packageName = basePackage + "." + raw;
+                    }
                 }
 
-                String content = entry.getValue();
-                if (!content.startsWith("package")) {
-                    content = "package " + packageName + ";\n\n" + content;
-                }
+                String content = entry.getValue().trim();
+
+                content = content.replaceFirst("^package\\s+[^;]+;", "");
+                content = "package " + packageName + ";\n\n" + content;
+
+                content = content.replaceAll(
+                    "(?m)^import\\s+((?!java\\.|javax\\.|org\\.|com\\.).+);",
+                    "import " + basePackage + ".$1;"
+                );
 
                 Files.writeString(filePath, content);
             }
@@ -72,8 +82,34 @@ public class ExerciseUtils {
             System.out.println("Files:");
             templates.keySet().forEach(f -> System.out.println("- " + exerciseRoot.resolve(f)));
 
-            System.out.println("\nPress Enter when you have completed the exercise...");
-            scanner.nextLine();
+            while (true) {
+                System.out.println("\n=== Exercise Options ===");
+                System.out.println("1. Run Exercise Code");
+                System.out.println("2. Submit Solution for Checking");
+                System.out.println("3. Ask AI About This Exercise");
+                System.out.println("4. Cancel Exercise and Go Back");
+                System.out.print("Choice: ");
+
+                String input = scanner.nextLine().trim();
+
+                if (input.equals("1")) {
+                    runExerciseProgram(exerciseRoot);
+                }
+                else if (input.equals("2")) {
+                    break; // Go to evaluation
+                }
+                else if (input.equals("3")) {
+                    askAIAboutExercise(scanner, patternName, instructionsObj, templates, exerciseRoot);
+                }
+                else if (input.equals("4")) {
+                    deleteExerciseFolder(exerciseRoot);
+                    System.out.println("Exercise cancelled. Returning...");
+                    return;
+                }
+                else {
+                    System.out.println("Invalid choice. Please enter 1, 2, 3, or 4.");
+                }
+            }
 
             StringBuilder combinedSolution = new StringBuilder();
             for (Map.Entry<String, String> entry : templates.entrySet()) {
@@ -95,13 +131,168 @@ public class ExerciseUtils {
                 System.out.println("Failed to retrieve feedback from LLM.");
             }
 
-            Files.walk(exerciseRoot)
-                    .sorted(Comparator.reverseOrder())
-                    .map(Path::toFile)
-                    .forEach(File::delete);
+            deleteExerciseFolder(exerciseRoot);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static void askAIAboutExercise(
+            Scanner scanner,
+            String patternName,
+            Map<String, Object> instructionsObj,
+            Map<String, String> templates,
+            Path exerciseRoot
+    ) {
+        try {
+            System.out.println("\nType your question to the AI (or type 'cancel'): ");
+            String question = scanner.nextLine().trim();
+
+            if (question.equalsIgnoreCase("cancel")) {
+                System.out.println("Cancelled asking AI.");
+                return;
+            }
+
+            // Load exercise file contents
+            Map<String, String> codeFiles = new java.util.HashMap<>();
+            for (String file : templates.keySet()) {
+                Path path = exerciseRoot.resolve(file);
+                codeFiles.put(file, Files.readString(path));
+            }
+
+            String instructions = (String) instructionsObj.get("instructions");
+
+            Map<String, Object> answer = runWithSpinner(
+            () -> llmClient.askHelp(
+                    patternName,
+                    instructions,
+                    codeFiles,
+                    question
+                ),
+                "Asking AI for help"
+            );
+
+            if (answer == null) {
+                System.out.println("AI could not respond.");
+                return;
+            }
+
+            System.out.println("\n=== AI Help ===");
+            String rawMd = (String) answer.get("answer");
+            String rendered = MarkdownTerminalRenderer.render(rawMd);
+            System.out.println(rendered);
+        } catch (Exception e) {
+            System.out.println("Error asking AI: " + e.getMessage());
+        }
+    }
+
+    private static void deleteExerciseFolder(Path exerciseRoot) {
+        try {
+            if (Files.exists(exerciseRoot)) {
+                Files.walk(exerciseRoot)
+                        .sorted(Comparator.reverseOrder())
+                        .map(Path::toFile)
+                        .forEach(File::delete);
+            }
+        } catch (Exception ignored) {}
+    }
+
+    private static void runExerciseProgram(Path exerciseRoot) {
+        try {
+            System.out.println("\nCompiling exercise...");
+
+            var javaFiles = Files.walk(exerciseRoot)
+                .filter(p -> p.toString().endsWith(".java"))
+                .map(Path::toString)
+                .toList();
+
+            if (javaFiles.isEmpty()) {
+                System.out.println("No Java files found to compile.");
+                return;
+            }
+
+            ProcessBuilder pbCompile = new ProcessBuilder();
+            pbCompile.command().add("javac");
+            pbCompile.command().add("-d");
+            pbCompile.command().add(exerciseRoot.toString());
+            pbCompile.command().addAll(javaFiles);
+
+            pbCompile.redirectErrorStream(true);
+            Process compile = pbCompile.start();
+            compile.waitFor();
+
+            try (Scanner s = new Scanner(compile.getInputStream())) {
+                boolean hasOutput = false;
+                while (s.hasNextLine()) {
+                    System.out.println(s.nextLine());
+                    hasOutput = true;
+                }
+                if (!hasOutput && compile.exitValue() != 0) {
+                    System.out.println("Compilation failed with unknown errors.");
+                }
+            }
+
+            if (compile.exitValue() != 0) {
+                System.out.println("\n❌ Compilation failed. Fix the errors and try again.");
+                return;
+            }
+
+            System.out.println("\n✔ Compilation successful. Searching for main class...");
+
+            String mainClass = detectMainClass(exerciseRoot);
+
+            if (mainClass == null) {
+                System.out.println("❌ No class with a main method found.");
+                System.out.println("Add a class containing:");
+                System.out.println("  public static void main(String[] args)");
+                return;
+            }
+
+            System.out.println("➡ Running: " + mainClass + "\n");
+
+            ProcessBuilder pbRun = new ProcessBuilder(
+                "java",
+                "-cp", exerciseRoot.toString(),
+                mainClass
+            );
+
+            pbRun.redirectErrorStream(true);
+            Process run = pbRun.start();
+
+            try (Scanner s = new Scanner(run.getInputStream())) {
+                while (s.hasNextLine()) System.out.println(s.nextLine());
+            }
+
+            run.waitFor();
+
+        } catch (Exception e) {
+            System.out.println("Unexpected error while running exercise: " + e.getMessage());
+        }
+    }
+
+    private static String detectMainClass(Path root) throws IOException {
+        for (Path p : (Iterable<Path>) Files.walk(root)::iterator) {
+            if (p.toString().endsWith(".java")) {
+                String content = Files.readString(p);
+
+                if (content.contains("public static void main(String[] args)")) {
+                    String pkg = "";
+                    var pkgMatch = java.util.regex.Pattern.compile(
+                        "^package\\s+([a-zA-Z0-9_.]+);",
+                        java.util.regex.Pattern.MULTILINE
+                    ).matcher(content);
+
+                    if (pkgMatch.find()) {
+                        pkg = pkgMatch.group(1) + ".";
+                    }
+
+                    String className = p.getFileName().toString().replace(".java", "");
+
+                    return pkg + className;
+                }
+            }
+        }
+        return null;
     }
 
     private static <T> T runWithSpinner(Supplier<T> task, String message) {
@@ -134,6 +325,7 @@ public class ExerciseUtils {
         }
         return result;
     }
+
 
 }
 

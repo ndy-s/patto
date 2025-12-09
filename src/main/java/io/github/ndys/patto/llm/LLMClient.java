@@ -8,6 +8,8 @@ public interface LLMClient {
 
     Map<String, String> generateTemplates(String patternName, Map<String, Object> instructions);
 
+    Map<String, Object> askHelp(String patternName, String instructions, Map<String, String> exerciseFiles, String userQuestion);
+
     Map<String, Object> checkSolution(String patternName, Map<String, Object> instructions, Map<String, String> templates, String combinedSolution);
 
 }

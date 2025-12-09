@@ -4,85 +4,73 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.genai.Client;
 import com.google.genai.types.GenerateContentResponse;
+import io.github.cdimascio.dotenv.Dotenv;
+import org.everit.json.schema.Schema;
+import org.everit.json.schema.loader.SchemaLoader;
+import org.json.JSONObject;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
-public class GeminiClient {
+public class GeminiClient implements LLMClient {
 
-    private static final Client client = new Client();
+    private static final Dotenv dotenv = Dotenv.load();
+    private static final String API_KEY = dotenv.get("GEMINI_API_KEY");
 
-    public static String generateExerciseInstructions(String patternName) {
-        String prompt = "Generate clear instructions for a Java coding exercise on the design pattern: " + patternName + ".\n" +
-                "Include:\n" +
-                "  - The objectives of the exercise.\n" +
-                "  - What the user should implement.\n" +
-                "  - Any constraints and guidance to complete the task.\n\n" +
-                "IMPORTANT RESTRICTIONS:\n" +
-                "  - Do NOT provide the solution or any full code implementation.\n" +
-                "  - Only provide instructions, requirements, and hints if needed.\n" +
-                "  - Make it clear what the user is expected to do without giving answers.";
+    private static final Client client = Client.builder().apiKey(API_KEY).build();
 
-        GenerateContentResponse response = client.models.generateContent("gemini-2.5-flash", prompt, null);
+    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final int MAX_RETRIES = 3;
 
-        System.out.println("=== DEBUG: Instructions Raw Response ===");
-        System.out.println(response.text());
-        System.out.println("======================================");
+    private static final Schema INSTRUCTIONS_SCHEMA = SchemaLoader.load(new JSONObject(LLMConfig.INSTRUCTIONS_SCHEMA_JSON));
+    private static final Schema TEMPLATE_SCHEMA = SchemaLoader.load(new JSONObject(LLMConfig.TEMPLATE_SCHEMA_JSON));
+    private static final Schema SOLUTION_SCHEMA = SchemaLoader.load(new JSONObject(LLMConfig.SOLUTION_SCHEMA_JSON));
 
-        return response.text();
+    @Override
+    public Map<String, Object> generateInstructions(String patternName) {
+        String prompt = String.format(LLMConfig.INSTRUCTIONS_PROMPT_TEMPLATE,
+                patternName, LLMConfig.INSTRUCTIONS_SCHEMA_JSON);
+        return callWithSchemaRetry(prompt, INSTRUCTIONS_SCHEMA, new TypeReference<>() {});
     }
 
-    public static Map<String, String> generateExerciseTemplates(String patternName, String instructions) {
-        String prompt = "Based on the following exercise instructions:\n" + instructions +
-                "\nGenerate a multi-file Java template for the exercise. " +
-                "Return it strictly as a JSON object where the keys are filenames (they can include subfolders like 'handler/Handler.java') " +
-                "and the values are the corresponding file contents. " +
-                "Do NOT include solutions, only class stubs, method signatures, and comments for the user to fill in. " +
-                "Do NOT include any markdown code blocks or explanations outside of JSON.\n\n" +
-                "Here is an example of the JSON structure you should return:\n" +
-                "{\n" +
-                "  \"handler/Handler.java\": \"public class Handler {\\n    // TODO: implement methods\\n}\",\n" +
-                "  \"client/Client.java\": \"public class Client {\\n    // TODO: implement main\\n}\"\n" +
-                "}\n" +
-                "Return only JSON, nothing else.";
-
-        GenerateContentResponse response = client.models.generateContent("gemini-2.5-flash", prompt, null);
-        String raw = response.text();
-
-        System.out.println("=== DEBUG: Template Raw Response ===");
-        System.out.println(raw);
-        System.out.println("===================================");
-
-        raw = raw.replaceAll("^```(json)?\\s*", "").replaceAll("\\s*```$", "").trim();
-
-        Map<String, String> files = new HashMap<>();
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            files = mapper.readValue(raw, new TypeReference<Map<String, String>>() {});
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Failed to parse LLM response as JSON.");
-        }
-
-        return files;
+    @Override
+    public Map<String, String> generateTemplates(String patternName, Map<String, Object> instructions) {
+        String prompt = String.format(LLMConfig.TEMPLATE_PROMPT_TEMPLATE,
+                instructions, LLMConfig.TEMPLATE_SCHEMA_JSON);
+        return callWithSchemaRetry(prompt, TEMPLATE_SCHEMA, new TypeReference<>() {});
     }
 
-    public static String checkSolution(String instructions, Map<String, String> templates, String combinedSolution) {
+    @Override
+    public Map<String, Object> checkSolution(String patternName, Map<String, Object> instructions,
+                                                    Map<String, String> templates, String combinedSolution) {
         StringBuilder templateContent = new StringBuilder();
-        templates.forEach((k, v) -> templateContent.append("// File: ").append(k).append("\n").append(v).append("\n\n"));
+        templates.forEach((k,v) -> templateContent.append("// File: ").append(k).append("\n").append(v).append("\n\n"));
 
-        String prompt = "Instructions:\n" + instructions +
-                "\nTemplate:\n" + templateContent +
-                "\nUser Solution:\n" + combinedSolution +
-                "\nCheck correctness, provide constructive feedback, and suggest improvements.";
+        String prompt = String.format(LLMConfig.SOLUTION_PROMPT_TEMPLATE,
+                patternName, instructions, templateContent, combinedSolution, LLMConfig.SOLUTION_SCHEMA_JSON);
 
-        GenerateContentResponse response = client.models.generateContent("gemini-2.5-flash", prompt, null);
+        return callWithSchemaRetry(prompt, SOLUTION_SCHEMA, new TypeReference<>() {});
+    }
 
-        System.out.println("=== DEBUG: Solution Check Raw Response ===");
-        System.out.println(response.text());
-        System.out.println("==========================================");
+    private static <T> T callWithSchemaRetry(String prompt, Schema schema, TypeReference<T> typeRef) {
+        for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+            try {
+                GenerateContentResponse response = client.models.generateContent("gemini-2.5-flash", prompt, null);
+                String raw = Objects.requireNonNull(response.text()).replaceAll("^```(json)?\\s*", "").replaceAll("\\s*```$", "").trim();
 
-        return response.text();
+                JSONObject json = new JSONObject(raw);
+                schema.validate(json);
+
+                return mapper.readValue(json.toString(), typeRef);
+            } catch (Exception e) {
+                System.out.println("Attempt " + attempt + " failed JSON/schema validation. Retrying...");
+                if (attempt == MAX_RETRIES) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+        }
+        return null;
     }
 }
 

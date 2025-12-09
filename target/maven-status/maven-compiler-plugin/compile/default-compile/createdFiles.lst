@@ -1,4 +1,9 @@
+io/github/ndys/patto/llm/GeminiClient$2.class
+io/github/ndys/patto/llm/GeminiClient$3.class
+io/github/ndys/patto/llm/LLMConfig.class
 io/github/ndys/patto/patterns/chain_of_responsibility/example1_support_ticket/TicketDemo.class
+io/github/ndys/patto/llm/LLMClient.class
+io/github/ndys/patto/patterns/ExerciseUtils.class
 io/github/ndys/patto/patterns/chain_of_responsibility/example1_support_ticket/Demo1.class
 io/github/ndys/patto/patterns/chain_of_responsibility/ChainOfResponsibility.class
 io/github/ndys/patto/llm/GeminiClient$1.class

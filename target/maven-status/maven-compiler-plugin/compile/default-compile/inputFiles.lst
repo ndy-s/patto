@@ -1,6 +1,9 @@
 /home/hendy/projects/patto/src/main/java/io/github/ndys/patto/app/Main.java
 /home/hendy/projects/patto/src/main/java/io/github/ndys/patto/app/Menu.java
 /home/hendy/projects/patto/src/main/java/io/github/ndys/patto/llm/GeminiClient.java
+/home/hendy/projects/patto/src/main/java/io/github/ndys/patto/llm/LLMClient.java
+/home/hendy/projects/patto/src/main/java/io/github/ndys/patto/llm/LLMConfig.java
+/home/hendy/projects/patto/src/main/java/io/github/ndys/patto/patterns/ExerciseUtils.java
 /home/hendy/projects/patto/src/main/java/io/github/ndys/patto/patterns/chain_of_responsibility/ChainOfResponsibility.java
 /home/hendy/projects/patto/src/main/java/io/github/ndys/patto/patterns/chain_of_responsibility/example1_support_ticket/Demo1.java
 /home/hendy/projects/patto/src/main/java/io/github/ndys/patto/patterns/chain_of_responsibility/example1_support_ticket/TicketDemo.java

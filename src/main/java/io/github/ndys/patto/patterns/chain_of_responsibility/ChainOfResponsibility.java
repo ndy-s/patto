@@ -1,39 +1,36 @@
 package io.github.ndys.patto.patterns.chain_of_responsibility;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.*;
-import java.util.Comparator;
-import java.util.Map;
 import java.util.Scanner;
+import static io.github.ndys.patto.utils.ExerciseUtils.generateAndDoExercise;
 
 import io.github.ndys.patto.patterns.chain_of_responsibility.example1_support_ticket.Demo1;
-import io.github.ndys.patto.llm.GeminiClient;
-
-import static io.github.ndys.patto.patterns.ExerciseUtils.generateAndDoExercise;
+import io.github.ndys.patto.utils.MenuUtils;
 
 public class ChainOfResponsibility {
 
-
-    public static void show() {
+    public static void show(String menuPath) {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("\n=== Chain of Responsibility Pattern Examples ===");
-        System.out.println("1. Support Ticket Handling");
-        System.out.println("2. Generate Exercise");
-        System.out.println("0. Back");
-        System.out.print("Choice: ");
+        while (true) {
+            MenuUtils.printHeader(menuPath);
 
-        int choice = scanner.nextInt();
-        scanner.nextLine();
+            System.out.println("1. Generate Exercise");
+            System.out.println("2. Support Ticket Handling Example");
+            System.out.println("0. Back");
+            System.out.print("Choice: ");
 
-        switch (choice) {
-            case 1 -> Demo1.run();
-            case 2 -> generateAndDoExercise(scanner, "Chain of Responsibility");
-            case 0 -> {}
-            default -> System.out.println("Invalid choice!");
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (choice) {
+                case 1 -> generateAndDoExercise(scanner, "Chain of Responsibility");
+                case 2 -> Demo1.run();
+                case 0 -> {
+                    return;
+                }
+                default -> System.out.println("Invalid choice! Please try again.");
+            }
         }
     }
-
 }
 

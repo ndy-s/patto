@@ -1,8 +1,7 @@
-package io.github.ndys.patto.patterns;
+package io.github.ndys.patto.utils;
 
 import io.github.ndys.patto.llm.GeminiClient;
 import io.github.ndys.patto.llm.LLMClient;
-import io.github.ndys.patto.console.MarkdownTerminalRenderer;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +13,7 @@ import java.util.function.Supplier;
 
 public class ExerciseUtils {
     private static final String EXERCISE_DIR = "src/main/java/io/github/ndys/patto/exercise/";
-    private static LLMClient llmClient = new GeminiClient();
+    private static final LLMClient llmClient = new GeminiClient();
 
     public static void generateAndDoExercise(Scanner scanner, String patternName) {
         try {
@@ -57,7 +56,7 @@ public class ExerciseUtils {
 
                 String packageName = basePackage;
 
-                if (relativePath != null && relativePath.getNameCount() > 0) {
+                if (relativePath.getNameCount() > 0) {
                     String raw = relativePath.toString().replace(File.separatorChar, '.');
                     if (!raw.equals(".") && !raw.isBlank()) {
                         packageName = basePackage + "." + raw;
@@ -77,37 +76,42 @@ public class ExerciseUtils {
                 Files.writeString(filePath, content);
             }
 
-            System.out.println("\nExercise generated: " + exerciseTitle);
-            System.out.println("Instructions: " + readmeFile);
+            System.out.println("\n+================ Exercise Generated ================+");
+            System.out.println("Title       : " + exerciseTitle);
+            System.out.println("Instructions: " + readmeFile.toAbsolutePath());
             System.out.println("Files:");
-            templates.keySet().forEach(f -> System.out.println("- " + exerciseRoot.resolve(f)));
+            templates.keySet().forEach(f ->
+                    System.out.println(" - " + exerciseRoot.resolve(f).toAbsolutePath())
+            );
+            System.out.println("+===================================================+");
 
+            label:
             while (true) {
-                System.out.println("\n=== Exercise Options ===");
-                System.out.println("1. Run Exercise Code");
-                System.out.println("2. Submit Solution for Checking");
-                System.out.println("3. Ask AI About This Exercise");
-                System.out.println("4. Cancel Exercise and Go Back");
-                System.out.print("Choice: ");
+                System.out.println("\n+================ Exercise Options =================+");
+                System.out.println("1. Ask AI About This Exercise");
+                System.out.println("2. Run Exercise Code");
+                System.out.println("3. Submit Solution for Checking");
+                System.out.println("0. Cancel and Delete Exercise");
+                System.out.print("Enter your choice: ");
 
                 String input = scanner.nextLine().trim();
 
-                if (input.equals("1")) {
-                    runExerciseProgram(exerciseRoot);
-                }
-                else if (input.equals("2")) {
-                    break; // Go to evaluation
-                }
-                else if (input.equals("3")) {
-                    askAIAboutExercise(scanner, patternName, instructionsObj, templates, exerciseRoot);
-                }
-                else if (input.equals("4")) {
-                    deleteExerciseFolder(exerciseRoot);
-                    System.out.println("Exercise cancelled. Returning...");
-                    return;
-                }
-                else {
-                    System.out.println("Invalid choice. Please enter 1, 2, 3, or 4.");
+                switch (input) {
+                    case "1":
+                        askAIAboutExercise(scanner, patternName, instructionsObj, templates, exerciseRoot);
+                        break;
+                    case "2":
+                        runExerciseProgram(exerciseRoot);
+                        break;
+                    case "3":
+                        break label; // Go to evaluation
+                    case "0":
+                        deleteExerciseFolder(exerciseRoot);
+                        System.out.println("Exercise cancelled. Returning...");
+                        return;
+                    default:
+                        System.out.println("Invalid choice. Please try again.");
+                        break;
                 }
             }
 
@@ -123,10 +127,17 @@ public class ExerciseUtils {
             );
 
             if (feedbackObj != null) {
-                System.out.println("\n=== Feedback from LLM ===");
-                System.out.println("Exercise: " + feedbackObj.get("exerciseTitle"));
-                System.out.println("Feedback: " + feedbackObj.get("feedback"));
-                System.out.println("Suggestions: " + feedbackObj.get("suggestions"));
+                System.out.println("\n+================ LLM Feedback =================+");
+
+                StringBuilder md = new StringBuilder();
+                md.append("## Exercise: ").append(feedbackObj.get("exerciseTitle")).append("\n\n");
+                md.append("### Feedback:\n").append(feedbackObj.get("feedback")).append("\n\n");
+                md.append("### Suggestions:\n").append(feedbackObj.get("suggestions")).append("\n");
+
+                String rendered = MarkdownTerminalRenderer.render(md.toString());
+                System.out.println(rendered);
+
+                System.out.println("+===============================================+");
             } else {
                 System.out.println("Failed to retrieve feedback from LLM.");
             }
@@ -177,10 +188,11 @@ public class ExerciseUtils {
                 return;
             }
 
-            System.out.println("\n=== AI Help ===");
+            System.out.println("\n+================ AI Help =================+");
             String rawMd = (String) answer.get("answer");
             String rendered = MarkdownTerminalRenderer.render(rawMd);
             System.out.println(rendered);
+            System.out.println("+==========================================+");
         } catch (Exception e) {
             System.out.println("Error asking AI: " + e.getMessage());
         }

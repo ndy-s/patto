@@ -17,3 +17,4 @@ Thumbs.db
 
 /.mvn/wrapper/maven-wrapper.jar
 
+/src/main/java/io/github/ndys/patto/exercise/

@@ -103,8 +103,58 @@ public class ExerciseUtils {
                     case "2":
                         runExerciseProgram(exerciseRoot);
                         break;
-                    case "3":
-                        break label; // Go to evaluation
+                    case "3": {
+                        StringBuilder combinedSolution = new StringBuilder();
+                        for (Map.Entry<String, String> entry : templates.entrySet()) {
+                            Path filePath = exerciseRoot.resolve(entry.getKey());
+                            combinedSolution.append(Files.readString(filePath)).append("\n\n");
+                        }
+
+                        Map<String, Object> feedbackObj = runWithSpinner(
+                            () -> llmClient.checkSolution(
+                                patternName,
+                                instructionsObj,
+                                templates,
+                                combinedSolution.toString()
+                            ),
+                            "Checking solution and generating feedback"
+                        );
+
+                        System.out.println("\n+================ LLM Feedback =================+");
+                        if (feedbackObj != null) {
+                            StringBuilder md = new StringBuilder();
+                            md.append("## Exercise: ").append(feedbackObj.get("exerciseTitle")).append("\n\n");
+                            md.append("### Feedback:\n").append(feedbackObj.get("feedback")).append("\n\n");
+                            md.append("### Suggestions:\n").append(feedbackObj.get("suggestions")).append("\n");
+
+                            String rendered = MarkdownTerminalRenderer.render(md.toString());
+                            System.out.println(rendered);
+                        } else {
+                            System.out.println("Failed to retrieve feedback from LLM.");
+                        }
+                        System.out.println("+===============================================+");
+
+                        while (true) {
+                            System.out.println("\n+============== What next? ==============+");
+                            System.out.println("1. Back to Exercise Options");
+                            System.out.println("2. Finish & Delete Exercise");
+                            System.out.print("Choose: ");
+
+                            String choice = scanner.nextLine().trim();
+
+                            if (choice.equals("1")) {
+                                continue label;   
+                            }
+
+                            if (choice.equals("2")) {
+                                deleteExerciseFolder(exerciseRoot);
+                                System.out.println("Exercise finished and deleted. Returning...");
+                                return;
+                            }
+
+                            System.out.println("Invalid choice. Try again.");
+                        }
+                    }
                     case "0":
                         deleteExerciseFolder(exerciseRoot);
                         System.out.println("Exercise cancelled. Returning...");
@@ -114,35 +164,6 @@ public class ExerciseUtils {
                         break;
                 }
             }
-
-            StringBuilder combinedSolution = new StringBuilder();
-            for (Map.Entry<String, String> entry : templates.entrySet()) {
-                Path filePath = exerciseRoot.resolve(entry.getKey());
-                combinedSolution.append(Files.readString(filePath)).append("\n\n");
-            }
-
-            Map<String, Object> feedbackObj = runWithSpinner(
-                    () -> llmClient.checkSolution(patternName, instructionsObj, templates, combinedSolution.toString()),
-                    "Checking solution and generating feedback"
-            );
-
-            if (feedbackObj != null) {
-                System.out.println("\n+================ LLM Feedback =================+");
-
-                StringBuilder md = new StringBuilder();
-                md.append("## Exercise: ").append(feedbackObj.get("exerciseTitle")).append("\n\n");
-                md.append("### Feedback:\n").append(feedbackObj.get("feedback")).append("\n\n");
-                md.append("### Suggestions:\n").append(feedbackObj.get("suggestions")).append("\n");
-
-                String rendered = MarkdownTerminalRenderer.render(md.toString());
-                System.out.println(rendered);
-
-                System.out.println("+===============================================+");
-            } else {
-                System.out.println("Failed to retrieve feedback from LLM.");
-            }
-
-            deleteExerciseFolder(exerciseRoot);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -1,5 +1,5 @@
 # Patto
-*A hands-on practice workbook for mastering design patterns*
+*A hands-on workbook for practicing design patterns through terminal-based demos and AI exercise agents*
 
 Patto started as a frustration.
 

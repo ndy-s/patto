@@ -1,5 +1,5 @@
 # Patto
-*A hands-on workbook for practicing design patterns through terminal-based demos and AI exercise agents*
+> *"A hands-on workbook for practicing design patterns through terminal-based demos and AI exercise agents"*
 
 Patto started as a frustration.
 
@@ -28,7 +28,7 @@ I think of it as an interactive workbook:
 * each exercise is a problem to solve
 * each solution is reviewed so I can see what I missed
 
-To support this loop, Patto uses several small AI agents powered by the free **Gemini** model.
+To support this loop, Patto uses several small AI agents powered by the free [Gemini](https://gemini.google.com) model.
 
 ## How Patto Works?
 ### Main Menu
@@ -37,19 +37,16 @@ When Patto starts, it shows a list of available design patterns.
 Each pattern acts like its own chapter. It is isolated, focused, and easy to revisit at any time.
 
 ### Pattern Submenu
-After selecting a pattern, I enter a dedicated submenu where I can:
-
-* view example implementations
-* generate a new exercise for that pattern
+After selecting a pattern, I enter a dedicated submenu where I can view example implementations and generate a new exercise for that pattern.
 
 This keeps exploration and practice organized while still making it easy to jump between them.
 
 ### Exercise Generation
 When I generate an exercise, Patto runs a small study loop using multiple agents:
 
-* **Instruction Agent** - Defines the problem, learning goals, and constraints.
-* **Template Agent** - Creates the starter code, folder structure, and TODO markers.
-* **Evaluation Agent** - Reviews my completed solution and provides feedback.
+* Instruction Agent: Defines the problem, learning goals, and constraints.
+* Template Agent: Creates the starter code, folder structure, and TODO markers.
+* Evaluation Agent: Reviews my completed solution and provides feedback.
 
 I can repeat this loop as many times as I want for any pattern until the ideas actually stick.
 

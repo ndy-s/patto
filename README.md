@@ -28,7 +28,7 @@ I think of it as an interactive workbook:
 * each exercise is a problem to solve
 * each solution is reviewed so I can see what I missed
 
-To support this loop, Patto uses several small AI agents powered by the free [Gemini](https://gemini.google.com) model.
+To support this loop, Patto uses several small AI agents powered by the free [Gemini](https://aistudio.google.com) model.
 
 ## How Patto Works?
 ### Main Menu

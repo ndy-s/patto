@@ -21,7 +21,7 @@ Instead of long explanations, it gives focused TODOs.
 And when I get stuck, I can ask questions and get guidance instead of staring at the screen.
 
 ## What is Patto?
-Patto is a terminal-based application that generates small, hands-on coding exercises for design patterns.
+Patto is a terminal-based application written in Java that generates small, hands-on coding exercises for design patterns. Java's object-oriented features make classic patterns explicit and easy to practice.
 
 I think of it as an interactive workbook:
 * each design pattern is a chapter

@@ -1,5 +1,5 @@
 # Patto
-"*A hands-on workbook for practicing design patterns through terminal-based demos and AI exercise agents*"
+> A hands-on workbook for practicing design patterns through terminal-based demos and AI exercise agents.
 
 This project started out of frustration.
 
@@ -22,10 +22,9 @@ I think of it as an interactive workbook:
 * each exercise is a problem to solve
 * each solution is reviewed so I can see what I missed or misunderstood
 
-To support this learning loop, this project uses several small AI agents powered by the free [Gemini](https://aistudio.google.com) model.
+To support this learning loop, this project uses several small AI agents powered by the free [Gemini](https://ai.google.dev/gemini-api) model.
 
 ## How it works?
-Here's a short demo of Patto in action, showing the basic flow and how the practice loop works.
 <video src="https://github.com/user-attachments/assets/53160c95-1c8d-4c48-90b3-4571e9c4215e" controls muted playsinline width="100%"></video>
 
 ### Main Menu
@@ -41,47 +40,45 @@ This keeps learning and practice organized, while still making it easy to jump b
 ### Exercise Generation
 When I generate an exercise, the project runs a simple study loop using multiple agents:
 
-* **Instruction Agent**: defines the problem, learning goals, and constraints.
-* **Template Agent**: generates the starter code, folder structure, and TODO markers.
-* **Evaluation Agent**: reviews my solution and gives feedback on what could be improved.
+* Instruction Agent: defines the problem, learning goals, and constraints.
+* Template Agent: generates the starter code, folder structure, and TODO markers.
+* Evaluation Agent: reviews my solution and gives feedback on what could be improved.
 
 I can repeat this loop as many times as I want for any pattern until it actually sticks.
 
-## Installation
+## Quick Setup
+Clone the repository and install dependencies:
 ```bash
 git clone https://github.com/ndy-s/patto
 cd patto
 mvn clean install
 ```
 
-Before running the project, copy the example environment file:
+Copy the example environment file and add your Gemini API key:
 ```bash
 cp .env.example .env
 ```
 
-Open `.env` and add your Gemini API key:
+Open `.env` and set your key:
 ```env
 GEMINI_API_KEY=your_key_here
 ```
+You can get a free API key from [Google AI Studio](https://aistudio.google.com).
 
-You can get a free API key from Google AI Studio.
-
-## Running
+Run the project:
 ```bash
 mvn exec:java
 ```
 
-Once it starts, the main menu will appear.
+Once it starts, the main menu will appear. From there, you can:
+* Choose a design pattern
+* View example implementations
+* Generate a new exercise
+* Work through the TODOs
+* Ask the agent for help
+* Submit your solution for review
 
-From there, I can:
-* choose a design pattern
-* view example implementations
-* generate a new exercise
-* work through the TODOs
-* ask the agent for help
-* submit my solution for review
-
-Generated exercises are placed here:
+Generated exercises are placed in:
 ```
 src/main/java/io/github/ndys/patto/exercise/
 ```
@@ -90,16 +87,11 @@ src/main/java/io/github/ndys/patto/exercise/
 ```
 patto/
 └── src/main/java/io/github/ndys/patto/
-    ├── exercise/        Auto-generated design pattern exercises
+    ├── exercise/        # Auto-generated exercises, cleaned up automatically after completion
     │   └── README.md
-    └── patterns/        Pattern menus, examples, and metadata
+    ├── patterns/        # Pattern menus, examples, and metadata
+    └── ...              # Other project directories and files
 ```
-
-## Why I Built This?
-I did not build this project to teach others at first.
-I built it because I needed a better way to learn.
-
-Design patterns only started to make sense once I implemented them repeatedly and saw where they helped, where they added complexity, and how small design decisions add up over time.
 
 ## Contributing
 Although this project began as a personal learning tool, contributions are welcome.
@@ -108,4 +100,3 @@ If you have ideas for better exercise flows, new patterns to add, improved feedb
 
 ## License
 MIT
-

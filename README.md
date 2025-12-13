@@ -14,10 +14,6 @@ So I created this project.
 
 This project is my personal learning companion for design patterns. It helps me learn patterns the same way you learn math or music, by practicing them over and over.
 
-Instead of chapters, it gives me exercises.
-Instead of long explanations, it gives me clear TODOs.
-And when I get stuck, I can ask questions and get guidance instead of staring at the screen.
-
 ## What is this project?
 This project is a terminal-based Java application that generates small, hands-on coding exercises for design patterns. Java's object-oriented nature makes classic patterns explicit and easy to reason about, which makes it a great language for practicing them.
 
@@ -29,6 +25,8 @@ I think of it as an interactive workbook:
 To support this learning loop, this project uses several small AI agents powered by the free [Gemini](https://aistudio.google.com) model.
 
 ## How it works?
+Here's a short demo of Patto in action, showing the basic flow and how the practice loop works.
+<video src="https://github.com/user-attachments/assets/53160c95-1c8d-4c48-90b3-4571e9c4215e" controls muted playsinline width="100%"></video>
 
 ### Main Menu
 When the application starts, it shows a list of available design patterns.

@@ -42,7 +42,7 @@ public class Menu {
                 ╚═════════════════════════════════════════════════╝
                 
                 0. Exit
-            """);
+                """);
 
             System.out.print("Select a pattern: ");
             String input = scanner.nextLine().trim();

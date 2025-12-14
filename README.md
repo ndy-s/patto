@@ -20,7 +20,8 @@ This project is a terminal-based Java application that generates small, hands-on
 I think of it as an interactive workbook:
 * each design pattern is a chapter
 * each exercise is a problem to solve
-* each solution is reviewed so I can see what I missed or misunderstood
+* each solution is reviewed and scored
+* mistakes become learning signals, not failures
 
 To support this learning loop, this project uses several small AI agents powered by the free [Gemini](https://ai.google.dev/gemini-api) model.
 
@@ -41,8 +42,8 @@ This keeps learning and practice organized, while still making it easy to jump b
 When I generate an exercise, the project runs a simple study loop using multiple agents:
 
 * Instruction Agent: defines the problem, learning goals, and constraints.
-* Template Agent: generates the starter code, folder structure, and TODO markers.
-* Evaluation Agent: reviews my solution and gives feedback on what could be improved.
+* Template Agent: generates the starter code, folder structure, and TODO markers (depending on difficulty).
+* Evaluation Agent: reviews my solution, a score based on correctness, and gives feedback on what could be improved.
 
 I can repeat this loop as many times as I want for any pattern until it actually sticks.
 
@@ -71,23 +72,24 @@ mvn exec:java
 ```
 
 Once it starts, the main menu will appear. From there, you can:
-* Choose a design pattern
-* View example implementations
-* Generate a new exercise
-* Work through the TODOs
-* Ask the agent for help
-* Submit your solution for review
+* choose a design pattern
+* view example implementations
+* generate an exercise
+* select a difficulty level
+* implement the solution
+* ask the agent for hints
+* submit your work for evaluation
 
 Generated exercises are placed in:
 ```
-src/main/java/io/github/ndys/patto/exercise/
+src/main/java/io/github/ndys/patto/workspace/
 ```
 
 ## Project Structure
 ```
 patto/
 └── src/main/java/io/github/ndys/patto/
-    ├── exercise/        # Auto-generated exercises, cleaned up automatically after completion
+    ├── workspace/       # Generated exercises (temporary workspace)
     │   └── README.md
     ├── patterns/        # Pattern menus, examples, and metadata
     └── ...              # Other project directories and files

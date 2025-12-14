@@ -26,7 +26,7 @@ I think of it as an interactive workbook:
 To support this learning loop, this project uses several small AI agents powered by the free [Gemini](https://ai.google.dev/gemini-api) model.
 
 ## How it works?
-<video src="https://github.com/user-attachments/assets/53160c95-1c8d-4c48-90b3-4571e9c4215e" controls muted playsinline width="100%"></video>
+<video src="https://github.com/user-attachments/assets/277e861c-c36b-4ed4-a40f-e94846b59896" controls muted playsinline width="100%"></video>
 
 ### Main Menu
 When the application starts, it shows a list of available design patterns.

@@ -1,19 +1,30 @@
 package io.github.ndys.patto.patterns.chain_of_responsibility.example1_support_ticket;
 
-import java.util.Scanner;
-import io.github.ndys.patto.utils.MenuUtils;
+import io.github.ndys.patto.ui.TerminalPrinter;
 
 public class Demo1 {
 
     public static void run() {
-        Scanner scanner = new Scanner(System.in);
+        TerminalPrinter.printHeader("Chain of Responsibility > Support Ticket Handling Demo");
 
-        MenuUtils.printHeader("Chain of Responsibility > Support Ticket Demo");
+        SupportHandler level1 = new Level1Support();
+        SupportHandler level2 = new Level2Support();
+        SupportHandler manager = new ManagerSupport();
 
-        TicketDemo ticketDemo = new TicketDemo();
+        level1.setNext(level2).setNext(manager);
 
-        System.out.println("\nDemo complete. Press Enter to return to the menu...");
-        scanner.nextLine();
+        Ticket t1 = new Ticket("Password reset", Severity.LOW);
+        Ticket t2 = new Ticket("System bug affecting reports", Severity.MEDIUM);
+        Ticket t3 = new Ticket("Production server down", Severity.HIGH);
+
+        level1.handle(t1);
+        level1.handle(t2);
+        level1.handle(t3);
+        
+        System.out.println("\nPress Enter to return...");
+        try {
+            System.in.read();
+        } catch (Exception ignored) {}
     }
 }
 

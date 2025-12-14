@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.genai.Client;
 import com.google.genai.types.GenerateContentResponse;
 import io.github.cdimascio.dotenv.Dotenv;
+import io.github.ndys.patto.exercise.DifficultyLevel;
+
 import org.everit.json.schema.Schema;
 import org.everit.json.schema.loader.SchemaLoader;
 import org.json.JSONObject;
@@ -36,20 +38,27 @@ public class GeminiClient implements LLMClient {
     }
 
     @Override
-    public Map<String, String> generateTemplates(String patternName, Map<String, Object> instructions) {
-        String prompt = String.format(LLMConfig.TEMPLATE_PROMPT_TEMPLATE,
-                instructions, LLMConfig.TEMPLATE_SCHEMA_JSON);
+    public Map<String, String> generateTemplates(
+        String patternName, 
+        Map<String, Object> instructions, 
+        DifficultyLevel difficulty
+    ) {
+        String prompt = String.format(LLMConfig.TEMPLATE_PROMPT_TEMPLATE, instructions, difficulty, LLMConfig.TEMPLATE_SCHEMA_JSON);
         return callWithSchemaRetry(prompt, TEMPLATE_SCHEMA, new TypeReference<>() {});
     }
 
     @Override
-    public Map<String, Object> checkSolution(String patternName, Map<String, Object> instructions,
-                                                    Map<String, String> templates, String combinedSolution) {
+    public Map<String, Object> checkSolution(
+        String patternName, 
+        Map<String, Object> instructions,
+        Map<String, String> templates, 
+        String combinedSolution,
+        DifficultyLevel difficulty
+    ) {
         StringBuilder templateContent = new StringBuilder();
         templates.forEach((k,v) -> templateContent.append("// File: ").append(k).append("\n").append(v).append("\n\n"));
 
-        String prompt = String.format(LLMConfig.SOLUTION_PROMPT_TEMPLATE,
-                patternName, instructions, templateContent, combinedSolution, LLMConfig.SOLUTION_SCHEMA_JSON);
+        String prompt = String.format(LLMConfig.SOLUTION_PROMPT_TEMPLATE, patternName, difficulty, instructions, templateContent, combinedSolution, LLMConfig.SOLUTION_SCHEMA_JSON);
 
         return callWithSchemaRetry(prompt, SOLUTION_SCHEMA, new TypeReference<>() {});
     }
@@ -104,6 +113,5 @@ public class GeminiClient implements LLMClient {
         }
         return null;
     }
-
 }
 

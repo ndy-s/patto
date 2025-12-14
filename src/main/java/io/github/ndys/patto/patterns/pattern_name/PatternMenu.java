@@ -2,7 +2,7 @@ package io.github.ndys.patto.patterns.pattern_name;
 
 import java.util.Scanner;
 import io.github.ndys.patto.patterns.pattern_name.example1_context.Demo1;
-import io.github.ndys.patto.utils.MenuUtils;
+import io.github.ndys.patto.ui.TerminalPrinter;
 
 import static io.github.ndys.patto.utils.ExerciseUtils.generateAndDoExercise;
 
@@ -12,7 +12,7 @@ public class PatternMenu {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            MenuUtils.printHeader(menuPath);
+            TerminalPrinter.printHeader(menuPath);
 
             System.out.println("1. Generate Exercise");
             System.out.println("1. Context 1 Example");

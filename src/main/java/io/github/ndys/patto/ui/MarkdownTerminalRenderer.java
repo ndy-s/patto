@@ -1,4 +1,4 @@
-package io.github.ndys.patto.utils;
+package io.github.ndys.patto.ui;
 
 public class MarkdownTerminalRenderer {
     private static final String RESET = "\u001B[0m";

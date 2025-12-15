@@ -49,8 +49,6 @@ public class ExerciseIO {
         }
 
         return BASE_PACKAGE;
-        // if (relative.getNameCount() == 0) return BASE_PACKAGE;
-        // return BASE_PACKAGE + "." + relative.toString().replace(File.separatorChar, '.');
     }
 
     private static String normalizeContent(String content, String pkg) {

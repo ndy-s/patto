@@ -169,16 +169,27 @@ public final class ExerciseMenu {
         }
     }
 
-    public static String combineSolution(ExerciseContext ctx)
-            throws Exception {
-
+    public static String combineSolution(ExerciseContext ctx) throws Exception {
         StringBuilder sb = new StringBuilder();
-        for (String f : ctx.templates.keySet()) {
-            sb.append(Files.readString(ctx.root.resolve(f)))
-              .append("\n\n");
-        }
+
+        Files.walk(ctx.root)
+            .filter(Files::isRegularFile)
+            .filter(p -> p.toString().endsWith(".java"))
+            .forEach(p -> {
+                try {
+                    sb.append("// File: ")
+                        .append(ctx.root.relativize(p))
+                        .append("\n");
+                    sb.append(Files.readString(p))
+                        .append("\n\n");
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+
         return sb.toString();
     }
+
 
 }
 

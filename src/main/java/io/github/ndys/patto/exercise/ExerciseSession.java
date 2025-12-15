@@ -1,15 +1,14 @@
 package io.github.ndys.patto.exercise;
 
+import java.util.Map;
+import java.util.Scanner;
+
 import io.github.ndys.patto.llm.LLMClient;
 import io.github.ndys.patto.runner.ExerciseCompiler;
 import io.github.ndys.patto.runner.ExerciseRunner;
 import io.github.ndys.patto.ui.ExerciseMenu;
-import io.github.ndys.patto.ui.TerminalPrinter;
 import io.github.ndys.patto.ui.Spinner;
-
-import java.nio.file.Path;
-import java.util.Map;
-import java.util.Scanner;
+import io.github.ndys.patto.ui.TerminalPrinter;
 
 public class ExerciseSession {
 

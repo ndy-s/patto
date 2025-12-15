@@ -1,0 +1,12 @@
+package io.github.ndys.patto.patterns.factory_method.example1_notification_system;
+
+public class SmsNotification implements Notification {
+
+    @Override
+    public void send(String message) {
+        System.out.println("Sending SMS: " + message);
+    }
+
+    
+}
+

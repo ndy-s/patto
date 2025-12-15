@@ -3,6 +3,7 @@ package io.github.ndys.patto.app;
 import java.util.Scanner;
 
 import io.github.ndys.patto.patterns.chain_of_responsibility.ChainOfResponsibility;
+import io.github.ndys.patto.patterns.factory_method.FactoryMethod;
 import io.github.ndys.patto.ui.TerminalPrinter;
 
 public class Menu {
@@ -48,6 +49,7 @@ public class Menu {
             String input = scanner.nextLine().trim();
 
             switch (input) {
+                case "1" -> FactoryMethod.show("Main Menu > Factory Method");
                 case "13" -> ChainOfResponsibility.show("Main Menu > Chain of Responsibility");
 
                 case "0" -> {

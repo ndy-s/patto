@@ -1,12 +1,12 @@
-package io.github.ndys.patto.patterns.pattern_name;
+package io.github.ndys.patto.patterns.abstract_factory;
+
+import io.github.ndys.patto.exercise.ExerciseFacade;
+import io.github.ndys.patto.patterns.abstract_factory.example1_ui_toolkit.Demo1;
+import io.github.ndys.patto.ui.TerminalPrinter;
 
 import java.util.Scanner;
 
-import io.github.ndys.patto.exercise.ExerciseFacade;
-import io.github.ndys.patto.patterns.pattern_name.example1_context.Demo1;
-import io.github.ndys.patto.ui.TerminalPrinter;
-
-public class PatternMenu {
+public class AbstractFactory {
 
     public static void show(String menuPath) {
         Scanner scanner = new Scanner(System.in);
@@ -15,7 +15,7 @@ public class PatternMenu {
             TerminalPrinter.printHeader(menuPath);
 
             System.out.println("1. Practice Exercise");
-            System.out.println("2. View Example: Notification System");
+            System.out.println("2. View Example: UI Toolkit");
             System.out.println("0. Back to Main Menu");
             System.out.print("Choice: ");
 
@@ -23,15 +23,14 @@ public class PatternMenu {
             scanner.nextLine();
 
             switch (choice) {
-                case 1 -> ExerciseFacade.start(scanner, "example pattern");
+                case 1 -> ExerciseFacade.start(scanner, "Abstract Factory");
                 case 2 -> Demo1.run();
                 case 0 -> {
                     return;
                 }
-                default -> System.out.println("Invalid choice! Please try again.");
+                default -> System.out.println("⚠️ Invalid choice. Please try again.");
             }
         }
     }
-
 }
 

@@ -2,6 +2,7 @@ package io.github.ndys.patto.app;
 
 import java.util.Scanner;
 
+import io.github.ndys.patto.patterns.abstract_factory.AbstractFactory;
 import io.github.ndys.patto.patterns.chain_of_responsibility.ChainOfResponsibility;
 import io.github.ndys.patto.patterns.factory_method.FactoryMethod;
 import io.github.ndys.patto.ui.TerminalPrinter;
@@ -50,6 +51,7 @@ public class Menu {
 
             switch (input) {
                 case "1" -> FactoryMethod.show("Main Menu > Factory Method");
+                case "2" -> AbstractFactory.show("Main Menu > Abstract Factory");
                 case "13" -> ChainOfResponsibility.show("Main Menu > Chain of Responsibility");
 
                 case "0" -> {

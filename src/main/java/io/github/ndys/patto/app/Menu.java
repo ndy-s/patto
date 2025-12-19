@@ -7,6 +7,7 @@ import io.github.ndys.patto.patterns.builder.Builder;
 import io.github.ndys.patto.patterns.chain_of_responsibility.ChainOfResponsibility;
 import io.github.ndys.patto.patterns.factory_method.FactoryMethod;
 import io.github.ndys.patto.patterns.prototype.Prototype;
+import io.github.ndys.patto.patterns.singleton.Singleton;
 import io.github.ndys.patto.ui.TerminalPrinter;
 
 public class Menu {
@@ -56,6 +57,7 @@ public class Menu {
                 case "2" -> AbstractFactory.show("Main Menu > Abstract Factory");
                 case "3" -> Builder.show("Main Menu > Builder");
                 case "4" -> Prototype.show("Main Menu > Prototype");
+                case "5" -> Singleton.show("Main Menu > Singleton");
                 case "13" -> ChainOfResponsibility.show("Main Menu > Chain of Responsibility");
 
                 case "0" -> {

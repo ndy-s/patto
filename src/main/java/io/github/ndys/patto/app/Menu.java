@@ -4,8 +4,11 @@ import java.util.Scanner;
 
 import io.github.ndys.patto.patterns.abstract_factory.AbstractFactory;
 import io.github.ndys.patto.patterns.adapter.Adapter;
+import io.github.ndys.patto.patterns.bridge.Bridge;
 import io.github.ndys.patto.patterns.builder.Builder;
 import io.github.ndys.patto.patterns.chain_of_responsibility.ChainOfResponsibility;
+import io.github.ndys.patto.patterns.composite.Composite;
+import io.github.ndys.patto.patterns.decorator.Decorator;
 import io.github.ndys.patto.patterns.factory_method.FactoryMethod;
 import io.github.ndys.patto.patterns.prototype.Prototype;
 import io.github.ndys.patto.patterns.singleton.Singleton;
@@ -60,6 +63,9 @@ public class Menu {
                 case "4" -> Prototype.show("Main Menu > Prototype");
                 case "5" -> Singleton.show("Main Menu > Singleton");
                 case "6" -> Adapter.show("Main Menu > Adapter");
+                case "7" -> Bridge.show("Main Menu > Bridge");
+                case "8" -> Composite.show("Main Menu > Composite");
+                case "9" -> Decorator.show("Main Menu > Decorator");
                 case "13" -> ChainOfResponsibility.show("Main Menu > Chain of Responsibility");
 
                 case "0" -> {

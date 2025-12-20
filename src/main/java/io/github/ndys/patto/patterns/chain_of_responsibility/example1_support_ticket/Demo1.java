@@ -1,8 +1,8 @@
 package io.github.ndys.patto.patterns.chain_of_responsibility.example1_support_ticket;
 
 import io.github.ndys.patto.ui.TerminalPrinter;
-public class Demo1 {
 
+public class Demo1 {
     public static void run() {
         TerminalPrinter.printHeader("Chain of Responsibility > Support Ticket Handling Demo");
 

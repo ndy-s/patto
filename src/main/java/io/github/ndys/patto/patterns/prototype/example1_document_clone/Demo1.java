@@ -27,7 +27,6 @@ public class Demo1 {
         try {
             System.in.read();
         } catch (Exception ignored) {}
-
     }
     
 }

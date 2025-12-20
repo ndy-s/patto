@@ -22,6 +22,12 @@ public class Demo1 {
         System.out.println("Cloned Documents:");
         System.out.println(doc1);
         System.out.println(doc2);
+
+        System.out.println("\nPress Enter to return...");
+        try {
+            System.in.read();
+        } catch (Exception ignored) {}
+
     }
     
 }

@@ -28,7 +28,7 @@ public class PatternMenu {
                 case 0 -> {
                     return;
                 }
-                default -> System.out.println("Invalid choice! Please try again.");
+                default -> System.out.println("Invalid choice.");
             }
         }
     }

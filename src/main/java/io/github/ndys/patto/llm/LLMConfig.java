@@ -14,7 +14,7 @@ public class LLMConfig {
                 "constraints":{"type":"array","items":{"type":"string"}},
                 "hints":{"type":"array","items":{"type":"string"}}
             },
-                "additionalProperties": false
+            "additionalProperties": false
         }
     """;
 
@@ -24,7 +24,7 @@ public class LLMConfig {
             "patternProperties": {
                 ".*\\\\.java$": {"type":"string"}
             },
-                "additionalProperties": false
+            "additionalProperties": false
         }
     """;
 
@@ -58,22 +58,41 @@ public class LLMConfig {
 
     // LLM prompt templates
     public static final String INSTRUCTIONS_PROMPT_TEMPLATE = """
-    Generate a JSON object for a Java coding exercise on the design pattern: %s.
+    Generate a JSON object for a Java coding exercise focused on REFACTORING
+    existing code using the design pattern: %s.
 
-    Include the following fields in JSON strictly according to the schema:
-    - title: a clear title of the exercise
-    - instructions: step-by-step instructions
-    - objectives: list of goals for the user to achieve
-    - constraints: rules or limitations to follow
-    - hints (optional): tips to help solve the exercise
+    The exercise MUST assume the student is given a working but poorly-designed
+    implementation that needs improvement.
+
+    Include the following fields strictly according to the schema:
+    - title
+    - instructions
+    - objectives
+    - constraints
+    - hints (optional)
 
     Detailed Guidance:
-    - Explain clearly what the user should implement.
-    - Include objectives like "Implement classes X and Y" or "Use interfaces and inheritance appropriately."
-    - Constraints can include things like "Do not use external libraries" or "Follow naming conventions."
-    - Hints should be optional but helpful, without giving full solutions.
+
+    - Instructions MUST describe a refactoring task, not building from scratch.
+      Example wording:
+      "Refactor the given implementation to remove tight coupling using the Strategy pattern."
+
+    - Objectives MUST focus on FIXING problems, such as:
+      - Reduce conditional complexity
+      - Eliminate duplicated logic
+      - Introduce proper abstractions
+      - Improve extensibility using the pattern
+
+    - Constraints may include:
+      - Do not change external behavior
+      - Do not remove existing public methods
+      - No external libraries
+
+    - Hints may point out smells (e.g., large if/else blocks), but MUST NOT
+      describe the final structure.
 
     IMPORTANT:
+    - Assume the student STARTS from inefficient code.
     - Do NOT include any solution code.
     - Return strictly JSON, nothing else.
 
@@ -82,38 +101,65 @@ public class LLMConfig {
     """;
 
     public static final String TEMPLATE_PROMPT_TEMPLATE = """
-    Based on the following instructions:
+    Based on the following exercise instructions:
     %s
 
     Difficulty Level: %s
 
-    Generate a multi-file Java template for the exercise.
+    Generate Java source files for the exercise.
+
+    CRITICAL PHILOSOPHY:
+    - The generated code represents a NAIVE, INEFFICIENT implementation
+    - The code MUST work functionally but be poorly designed
+    - The student’s task is to REFACTOR this code using a design pattern
+
+    You MUST generate code that includes:
+    - Tight coupling
+    - Hard-coded conditionals or switches
+    - Rigid dependencies
+    - Logic that becomes hard to extend
+    - NO use of the target design pattern
+
+    DEPENDENCY CONSISTENCY RULES (VERY IMPORTANT):
+    - EVERY non-JDK class referenced in code MUST be generated as a file
+    - If class A uses class B, class B MUST exist in the output
+    - Do NOT reference imaginary, external, or undefined classes
+    - Circular dependencies are allowed, missing dependencies are NOT
+    - Code MUST compile when all generated files are placed together
+
+    PACKAGE & FOLDER RULES (VERY IMPORTANT):
+    - You MAY use subfolders in filenames to group classes
+    - Folder names MUST be simple, lowercase, and meaningful
+    - DO NOT write any package declaration in code
+    - DO NOT use fully-qualified class names
+    - DO NOT import project-internal classes
+    - Assume all project classes are in the same logical package hierarchy
+    - ONLY import from java.* or javax.*
 
     Difficulty Rules:
-
+    
     IF Difficulty = GUIDED:
-    - Provide the COMPLETE class and interface structure
-    - Include class names, interfaces, and method signatures
-    - Method bodies MUST be EMPTY, return default values, or throw
-    UnsupportedOperationException
-    - Include TODO comments ONLY to indicate WHERE logic should be written
-    - DO NOT implement any business logic
-    - DO NOT show control flow, conditions, or algorithmic decisions
-    - This mode teaches structure, NOT the solution
-
+    - Generate ALL concrete classes directly
+    - Do NOT define interfaces or abstractions
+    - Business logic may exist but SHOULD be messy
+    - No TODOs that explain the solution
+    
     IF Difficulty = MINIMAL:
-    - Provide minimal scaffolding only
-    - MAY include a single entry-point class (e.g., Main or Client)
-    - DO NOT define handlers, interfaces, or concrete classes
-    - NO TODO comments explaining structure
-    - Student must design the solution themselves
-
-    General Requirements:
+    - Generate the smallest possible working implementation
+    - Still naive and rigid
+    - No hints in code
+    
+    ABSOLUTE RULES:
+    - Do NOT refactor the code
+    - Do NOT introduce the design pattern
+    - Do NOT include comments explaining how to fix it
+    - Do NOT include markdown or explanations
+    
+    Output Requirements:
     - Keys: filenames (can include subfolders)
     - Values: Java source code only
-    - Do NOT include solution logic
-    - Do NOT include markdown or explanations
-
+    - Code must compile when placed under a single root package
+    
     Return strictly JSON using this schema:
     %s
     """;
@@ -140,6 +186,8 @@ public class LLMConfig {
     - Do NOT reveal or generate full solutions.
     - You MAY give hints or explanations.
     - Return strictly JSON, matching this schema:
+    - Focus explanations on identifying problems and design smells
+    - Do NOT suggest full class structures or final refactored Direction
 
     Student question:
     %s

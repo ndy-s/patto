@@ -1,51 +1,70 @@
 # Patto
 > A hands-on workbook for practicing design patterns through terminal-based demos and AI exercise agents.
 
+## Why this project exists?
 This project started out of frustration.
 
 Whenever I read about design patterns, things made sense at first. I could follow the diagrams, understand the terminology, and recognize what each pattern was trying to solve. But a few weeks later, that understanding faded.
 
-I would forget when a pattern is actually useful, what the code looks like in a real project, and why the pattern even matters.
+I would forget **when** a pattern is actually useful, **what** the code looks like in a real project, and **why** the pattern even matters.
 
 Reading was not enough.
 I needed repetition. I needed practice. I needed to actually build things.
 
-So I created this project.
+So I created Patto.
 
-This project is my personal learning companion for design patterns. It helps me learn patterns the same way you learn math or music, by practicing them over and over.
+Patto is my personal learning companion for design patterns. It helps me learn patterns the same way you learn math or music by practicing them over and over.
 
-## What is this project?
-This project is a terminal-based Java application that generates small, hands-on coding exercises for design patterns. Java's object-oriented nature makes classic patterns explicit and easy to reason about, which makes it a great language for practicing them.
+## What is Patto?
+Patto is a terminal-based Java application that generates hands-on refactoring exercises for design patterns.
 
-I think of it as an interactive workbook:
+Instead of starting from clean or ideal code, Patto deliberately generates working but badly designed code:
+* tightly coupled
+* rigid and hard to extend
+* full of conditionals and duplication
+
+Your task is to refactor that smelly code and apply the correct design pattern to improve it.
+
+Java's object-oriented nature makes classic design patterns explicit and easy to reason about, which makes it a great language for this kind of practice.
+
+You can think of Patto as an interactive workbook:
 * each design pattern is a chapter
-* each exercise is a problem to solve
-* each solution is reviewed and scored
+* each exercise starts with bad code
+* your job is to refactor it
+* your solution is reviewed and scored
 * mistakes become learning signals, not failures
-
-To support this learning loop, this project uses several small AI agents powered by the free [Gemini](https://ai.google.dev/gemini-api) model.
 
 ## How it works?
 <video src="https://github.com/user-attachments/assets/277e861c-c36b-4ed4-a40f-e94846b59896" controls muted playsinline width="100%"></video>
 
-### Main Menu
+### 1. Main Menu
 When the application starts, it shows a list of available design patterns.
 
-Each pattern acts like its own chapter. It is focused, isolated, and easy to return to whenever I want to refresh my understanding.
+Each pattern acts like its own chapter: focused, isolated, and easy to return to whenever you want to refresh your understanding.
 
-### Pattern Submenu
-After selecting a pattern, I enter a submenu where I can explore example implementations or generate a new exercise for that specific pattern.
+### 2. Pattern Submenu
+After selecting a pattern, you enter a submenu where you can:
 
-This keeps learning and practice organized, while still making it easy to jump between patterns.
+* explore example implementations
+* generate a new refactoring exercise for that pattern
 
-### Exercise Generation
-When I generate an exercise, the project runs a simple study loop using multiple agents:
+This keeps learning and practice organized, while still allowing you to jump between patterns easily.
 
-* Instruction Agent: defines the problem, learning goals, and constraints.
-* Template Agent: generates the starter code, folder structure, and TODO markers (depending on difficulty).
-* Evaluation Agent: reviews my solution, a score based on correctness, and gives feedback on what could be improved.
+### 3. Exercise Generation & Refactoring Loop
+When you generate an exercise, Patto runs a simple learning loop using multiple AI agents powered by the free [Gemini](https://ai.google.dev/gemini-api) model:
 
-I can repeat this loop as many times as I want for any pattern until it actually sticks.
+* **Instruction Agent**: Defines the learning goal, constraints, and difficulty level.
+
+* **Template Agent**: Generates intentionally smelly but functional Java code.
+  The code:
+  * compiles and runs
+  * is poorly designed on purpose
+  * does *not* use the target design pattern
+  * is meant to be refactored by the learner
+
+* **Evaluation Agent**: Reviews your refactored solution, scores it based on correctness and pattern usage, and provides feedback on what could be improved.
+
+You can repeat this loop as many times as you want for any pattern until it actually sticks.
 
 ## Quick Setup
 Clone the repository and install dependencies:
@@ -71,34 +90,31 @@ Run the project:
 mvn exec:java
 ```
 
-Once it starts, the main menu will appear. From there, you can:
+## Using Patto
+Once the application starts, the main menu will appear. From there, you can:
 * choose a design pattern
 * view example implementations
-* generate an exercise
+* generate a smelly-code exercise
 * select a difficulty level
-* implement the solution
+* refactor the code using the pattern
 * ask the agent for hints
-* submit your work for evaluation
+* submit your solution for evaluation
 
 Generated exercises are placed in:
 ```
 src/main/java/io/github/ndys/patto/workspace/
 ```
+This directory acts as a temporary sandbox where you work on each exercise.
 
 ## Project Structure
 ```
 patto/
 └── src/main/java/io/github/ndys/patto/
-    ├── workspace/       # Generated exercises (temporary workspace)
+    ├── workspace/       # Generated exercises (refactoring workspace)
     │   └── README.md
     ├── patterns/        # Pattern menus, examples, and metadata
     └── ...              # Other project directories and files
 ```
-
-## Contributing
-Although this project began as a personal learning tool, contributions are welcome.
-
-If you have ideas for better exercise flows, new patterns to add, improved feedback, or alternative learning approaches, feel free to open an issue or submit a pull request.
 
 ## License
 MIT

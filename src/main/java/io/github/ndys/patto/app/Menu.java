@@ -9,6 +9,7 @@ import io.github.ndys.patto.patterns.builder.Builder;
 import io.github.ndys.patto.patterns.chain_of_responsibility.ChainOfResponsibility;
 import io.github.ndys.patto.patterns.composite.Composite;
 import io.github.ndys.patto.patterns.decorator.Decorator;
+import io.github.ndys.patto.patterns.facade.Facade;
 import io.github.ndys.patto.patterns.factory_method.FactoryMethod;
 import io.github.ndys.patto.patterns.prototype.Prototype;
 import io.github.ndys.patto.patterns.singleton.Singleton;
@@ -66,6 +67,7 @@ public class Menu {
                 case "7" -> Bridge.show("Main Menu > Bridge");
                 case "8" -> Composite.show("Main Menu > Composite");
                 case "9" -> Decorator.show("Main Menu > Decorator");
+                case "10" -> Facade.show("Main Menu > Facade");
                 case "13" -> ChainOfResponsibility.show("Main Menu > Chain of Responsibility");
 
                 case "0" -> {

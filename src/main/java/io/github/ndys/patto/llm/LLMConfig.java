@@ -101,64 +101,69 @@ public class LLMConfig {
     """;
 
     public static final String TEMPLATE_PROMPT_TEMPLATE = """
-    Based on the following exercise instructions:
+    You are generating STARTER CODE for a Java design-pattern exercise.
+    
+    This starter code represents a WORKING but POORLY DESIGNED implementation
+    that the student must REFACTOR using the specified design pattern.
+    
+    Exercise Context:
+    Instructions:
     %s
-
-    Difficulty Level: %s
-
-    Generate Java source files for the exercise.
-
-    CRITICAL PHILOSOPHY:
-    - The generated code represents a NAIVE, INEFFICIENT implementation
-    - The code MUST work functionally but be poorly designed
-    - The student’s task is to REFACTOR this code using a design pattern
-
-    You MUST generate code that includes:
-    - Tight coupling
-    - Hard-coded conditionals or switches
-    - Rigid dependencies
-    - Logic that becomes hard to extend
-    - NO use of the target design pattern
-
-    DEPENDENCY CONSISTENCY RULES (VERY IMPORTANT):
-    - EVERY non-JDK class referenced in code MUST be generated as a file
-    - If class A uses class B, class B MUST exist in the output
-    - Do NOT reference imaginary, external, or undefined classes
-    - Circular dependencies are allowed, missing dependencies are NOT
-    - Code MUST compile when all generated files are placed together
-
-    PACKAGE & FOLDER RULES (VERY IMPORTANT):
-    - You MAY use subfolders in filenames to group classes
-    - Folder names MUST be simple, lowercase, and meaningful
-    - DO NOT write any package declaration in code
+    
+    Difficulty Level:
+    %s
+    
+    Primary Goal:
+    - Generate NAIVE, INEFFICIENT, TIGHTLY-COUPLED Java code
+    - Code MUST compile and run correctly
+    - Code MUST be hard to extend or modify
+    - DO NOT use the target design pattern in any form
+    
+    Dependency Completeness (Critical):
+    - EVERY non-JDK class referenced MUST be generated as a source file
+    - If a class is instantiated, called, or typed, it MUST exist
+    - Do NOT reference undefined, external, or imaginary classes
+    - Circular dependencies are allowed
+    - Missing dependencies are NOT allowed
+    
+    Class Declaration Rules (Mandatory):
+    - EVERY top-level class MUST be declared as public
+    - File name MUST exactly match the public class name
+    - Do NOT define multiple top-level classes in one file
+    
+    Package & Import Rules (Processor-aware):
+    - DO NOT write any package declaration
     - DO NOT use fully-qualified class names
     - DO NOT import project-internal classes
-    - Assume all project classes are in the same logical package hierarchy
     - ONLY import from java.* or javax.*
-
-    Difficulty Rules:
+    - Assume all project classes share the same logical package hierarchy
+    - Subfolders MAY be used in filenames to organize code
+    - Folder names must be lowercase and meaningful
     
+    Difficulty-specific Rules:
     IF Difficulty = GUIDED:
     - Generate ALL concrete classes directly
-    - Do NOT define interfaces or abstractions
-    - Business logic may exist but SHOULD be messy
-    - No TODOs that explain the solution
+    - No interfaces or abstract classes
+    - Business logic MAY exist and SHOULD be messy
+    - Do NOT include TODOs or structural hints
     
     IF Difficulty = MINIMAL:
     - Generate the smallest possible working implementation
     - Still naive and rigid
-    - No hints in code
+    - No hints, no abstractions
     
-    ABSOLUTE RULES:
-    - Do NOT refactor the code
+    Forbidden Actions (Absolute):
+    - Do NOT refactor or clean the code
     - Do NOT introduce the design pattern
-    - Do NOT include comments explaining how to fix it
-    - Do NOT include markdown or explanations
+    - Do NOT explain how to fix the code
+    - Do NOT include markdown or commentary
+    - Do NOT optimize readability or architecture
     
-    Output Requirements:
-    - Keys: filenames (can include subfolders)
-    - Values: Java source code only
-    - Code must compile when placed under a single root package
+    Output Contract:
+    - Output MUST be valid JSON
+    - Keys = filenames (may include subfolders)
+    - Values = raw Java source code only
+    - Code MUST compile when placed under a single root package
     
     Return strictly JSON using this schema:
     %s

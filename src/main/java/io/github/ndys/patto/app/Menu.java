@@ -13,6 +13,7 @@ import io.github.ndys.patto.patterns.facade.Facade;
 import io.github.ndys.patto.patterns.factory_method.FactoryMethod;
 import io.github.ndys.patto.patterns.flyweight.Flyweight;
 import io.github.ndys.patto.patterns.prototype.Prototype;
+import io.github.ndys.patto.patterns.proxy.Proxy;
 import io.github.ndys.patto.patterns.singleton.Singleton;
 import io.github.ndys.patto.ui.TerminalPrinter;
 
@@ -70,6 +71,7 @@ public class Menu {
                 case "9" -> Decorator.show("Main Menu > Decorator");
                 case "10" -> Facade.show("Main Menu > Facade");
                 case "11" -> Flyweight.show("Main Menu > Flyweight");
+                case "12" -> Proxy.show("Main Menu > Proxy");
                 case "13" -> ChainOfResponsibility.show("Main Menu > Chain of Responsibility");
 
                 case "0" -> {

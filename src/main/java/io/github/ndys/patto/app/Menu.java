@@ -7,6 +7,7 @@ import io.github.ndys.patto.patterns.adapter.Adapter;
 import io.github.ndys.patto.patterns.bridge.Bridge;
 import io.github.ndys.patto.patterns.builder.Builder;
 import io.github.ndys.patto.patterns.chain_of_responsibility.ChainOfResponsibility;
+import io.github.ndys.patto.patterns.command.Command;
 import io.github.ndys.patto.patterns.composite.Composite;
 import io.github.ndys.patto.patterns.decorator.Decorator;
 import io.github.ndys.patto.patterns.facade.Facade;
@@ -73,6 +74,7 @@ public class Menu {
                 case "11" -> Flyweight.show("Main Menu > Flyweight");
                 case "12" -> Proxy.show("Main Menu > Proxy");
                 case "13" -> ChainOfResponsibility.show("Main Menu > Chain of Responsibility");
+                case "14" -> Command.show("Main Menu > Command");
 
                 case "0" -> {
                     System.out.println("Exiting...👋 Goodbye!");

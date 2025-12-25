@@ -8,7 +8,7 @@ public class Demo1 {
     public static void run() {
         Scanner scanner = new Scanner(System.in);
 
-        MenuUtils.printHeader("Template Pattern Demo");
+        MenuUtils.printHeader("Template Pattern");
 
         System.out.println("--- Example Demo Template ---");
         System.out.println("Replace this section with your pattern demo logic.");

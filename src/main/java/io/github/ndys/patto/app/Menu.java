@@ -13,6 +13,7 @@ import io.github.ndys.patto.patterns.decorator.Decorator;
 import io.github.ndys.patto.patterns.facade.Facade;
 import io.github.ndys.patto.patterns.factory_method.FactoryMethod;
 import io.github.ndys.patto.patterns.flyweight.Flyweight;
+import io.github.ndys.patto.patterns.iterator.Iterator;
 import io.github.ndys.patto.patterns.prototype.Prototype;
 import io.github.ndys.patto.patterns.proxy.Proxy;
 import io.github.ndys.patto.patterns.singleton.Singleton;
@@ -75,6 +76,7 @@ public class Menu {
                 case "12" -> Proxy.show("Main Menu > Proxy");
                 case "13" -> ChainOfResponsibility.show("Main Menu > Chain of Responsibility");
                 case "14" -> Command.show("Main Menu > Command");
+                case "15" -> Iterator.show("Main Menu > Iterator");
 
                 case "0" -> {
                     System.out.println("Exiting...👋 Goodbye!");

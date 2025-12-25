@@ -4,7 +4,7 @@ import io.github.ndys.patto.ui.TerminalPrinter;
 
 public class Demo1 {
     public static void run() {
-        TerminalPrinter.printHeader("Chain of Responsibility > Support Ticket Handling Demo");
+        TerminalPrinter.printHeader("Chain of Responsibility > Support Ticket Handling");
 
         SupportHandler level1 = new Level1Support();
         SupportHandler level2 = new Level2Support();
